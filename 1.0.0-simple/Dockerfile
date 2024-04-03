@@ -1,4 +1,4 @@
-FROM golang:1.22.0-apline3.19
+FROM golang:1.22.0-alpine3.19
 
 COPY main-simple.go /app/main-simple.go
 
