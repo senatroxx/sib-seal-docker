@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  mongo:
+    container_name: mongo
+    image: mongo:4.0-xenial
+    ports:
+      - 27017:27017
+    networks:
+      - sib-seal-network
+    volumes:
+      - mongo_data:/data/db
+
+  redis:
+    container_name: redis
+    image: redis:7.2.4-alpine3.19
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    ports:
+      - 6379:6379
+    networks:
+      - sib-seal-network
+
+  sib-seal-1.0.2:
+    container_name: sib-seal-1.0.2
+    image: senatroxx/sib-seal-test:1.0.2
+    ports:
+      - 8080:8080
+    depends_on:
+      - redis
+      - mongo
+    environment:
+      - HELLO_MESSAGE="Hello, Universe!"
+      - PORT=8080
+      - MONGO_ADDR=mongo
+      - MONGO_PORT=27017
+      - REDIS_ADDR=redis
+      - REDIS_PORT=6379
+    networks:
+      - sib-seal-network
+
+networks:
+  sib-seal-network:
+    name: sib-seal-network
+
+volumes:
+  mongo_data:
+  redis_data:
